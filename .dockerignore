@@ -1,0 +1,6 @@
+frontend/
+.git/
+.idea/
+.vscode/
+**/__pycache__/
+*.md
