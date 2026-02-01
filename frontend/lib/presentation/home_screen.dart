@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter/services.dart';
+import 'package:characters/characters.dart';
 
 import '../core/api_client.dart';
 import '../core/isolate_manager.dart';
@@ -40,21 +41,36 @@ class _HomeScreenState extends State<HomeScreen> {
   void _startTypewriter(String fullText) {
     _typewriterTimer?.cancel();
     _displayedReport = "";
-    int currentIndex = 0;
     
-    // Speed: 5 chars every 10ms = 500 chars/second (Fast but readable)
-    const chunkSize = 5;
+    // Use character iterator to safely handle emojis/UTF-16
+    final iterator = fullText.characters.iterator;
     
     _typewriterTimer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
-      if (currentIndex < fullText.length) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      String chunk = "";
+      bool hasMore = false;
+      
+      // Speed: 5 characters (grapheme clusters) every 10ms
+      for (int i = 0; i < 5; i++) {
+        if (iterator.moveNext()) {
+          chunk += iterator.current;
+          hasMore = true;
+        } else {
+          break;
+        }
+      }
+
+      if (chunk.isNotEmpty) {
         setState(() {
-          int nextIndex = currentIndex + chunkSize;
-          if (nextIndex > fullText.length) nextIndex = fullText.length;
-          
-          _displayedReport += fullText.substring(currentIndex, nextIndex);
-          currentIndex = nextIndex;
+          _displayedReport += chunk;
         });
-      } else {
+      }
+
+      if (!hasMore) {
         timer.cancel();
       }
     });
