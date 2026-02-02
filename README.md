@@ -8,7 +8,7 @@ This project was built to demonstrate full-stack engineering fundamentals, speci
 
 ## Demo
 
-[Watch the Demo Video (3 min)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
+[Watch the Demo Video (3 min)](https://youtu.be/F1-m3s2k2zY)
 
 ## System Architecture
 
